@@ -2,7 +2,6 @@ tmp/
 node_modules/
 nwjs/
 nw-sample-apps-master/
-.yo-rc.json
 .grunt
 build/
 dist/

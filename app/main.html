@@ -9,6 +9,15 @@
       var ticker = require("./modules/ticker");
       var el = document.getElementById("last-trade");
       ticker.bindTo(el);
+
+      var cex = require('coinbase-exchange'); 
+      var config = require('config');
+      var authedClient = new cex.AuthenticatedClient(
+  key, b64secret, passphrase);
+
+      authedClient.getAccounts(function(err, response, data){
+        console.log(err, response, data); 
+      });
     </script>
   </body>
 </html>

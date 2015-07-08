@@ -6,3 +6,6 @@ nw-sample-apps-master/
 .grunt
 build/
 dist/
+
+#dont send this to github since it has private data
+config.js

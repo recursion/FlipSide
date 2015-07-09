@@ -11,9 +11,10 @@
       ticker.bindTo(el);
 
       var cex = require('coinbase-exchange'); 
-      var config = require('config');
+      var config = require('./config');
+      
       var authedClient = new cex.AuthenticatedClient(
-  key, b64secret, passphrase);
+  config.key, config.b64secret, config.passphrase, config.uri);
 
       authedClient.getAccounts(function(err, response, data){
         console.log(err, response, data); 

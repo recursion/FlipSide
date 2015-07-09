@@ -38,6 +38,10 @@
         cbex_SANDBOX.getAccount(account.usd, function(err, res,  data){
           console.log(data);
         });
+
+        cbex_SANDBOX.getOrders(function(err, res, data){
+          console.log(data);
+        });
       });
 
     </script>

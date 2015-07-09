@@ -5,20 +5,41 @@
   <body>
     BTC-USD: <span id="last-trade"></span>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
     <script>
       var ticker = require("./modules/ticker");
       var el = document.getElementById("last-trade");
       ticker.bindTo(el);
 
-      var cex = require('coinbase-exchange'); 
-      var config = require('./config');
+      var cbex = require('coinbase-exchange'); 
       
-      var authedClient = new cex.AuthenticatedClient(
-  config.key, config.b64secret, config.passphrase, config.uri);
+      // so we could just select a different config
+      // or have some different class of file for exchange(s) data
+      var config = require('./config/config');
 
-      authedClient.getAccounts(function(err, response, data){
-        console.log(err, response, data); 
+      // and then instantiate by config
+      var cbex_SANDBOX = require('./modules/accounts/account')(config); 
+
+      var account = {};
+      cbex_SANDBOX.getAccounts(function(err, res, data){
+        console.log(data);
+
+        // set balance(s)
+        account.usd = data[0].id;
+        account.gbp = data[1].id;
+        account.eur = data[2].id;
+        account.btc = data[3].id;
+        
+        console.log(account);
+        cbex_SANDBOX.getAccount(account.btc, function(err, res,  data){
+          console.log(data);
+        });
+
+        cbex_SANDBOX.getAccount(account.usd, function(err, res,  data){
+          console.log(data);
+        });
       });
+
     </script>
   </body>
 </html>

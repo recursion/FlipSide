@@ -5,11 +5,94 @@
   </head>
   <body>
     BTC-USD: <span id="last-trade" class="ticker"></span>
-
+    <div class="orderEntryBox">
+      Lot Size<input id="size" type="number" value="1" min="0.0001" max="100" /><br>
+      Price<input id="price" type="number" min="" max="" /><br>
+      <button id="buy" onclick="buy()">Buy</button><button id="sell" onclick="sell()">Sell</button>
+    </div>
+    <div id="openOrdersBox">
+      <h5>Orders:</h5>
+      <div id="orders"><p>Test Order!</p></div>
+    </div>
+    <div id="walletsBox">
+    </div>
     <script>
       var ticker = require("./lib/ticker");
       var el = document.getElementById("last-trade");
       ticker.bindTo(el);
+
+      function sell(){
+        var price = document.getElementById('price').value;
+        var size = document.getElementById('size').value;
+        console.log('selling ' + size + ' at: ', price);
+        sandbox.sell(price, size);
+      }
+
+      function buy(){
+        var price = document.getElementById('price').value;
+        var size = document.getElementById('size').value;
+        console.log('buying ' + size + ' at: ', price);
+        sandbox.buy(price, size);
+      }
+
+      // TODO: create some sort of account loader/manager module?
+
+      // (contains exchange/account key/secret/passphrase)
+      var sandboxCreds = require('./lib/accounts/credentials/sandbox'); 
+
+      // create our sandbox interface by passing it our creds
+      var sandbox = require('./lib/accounts/account')(sandboxCreds);
+
+      var update = function(){
+
+        // clear order data
+        var ordersNode = document.getElementById("orders");
+        while (ordersNode.firstChild) {
+          console.log('pr', ordersNode);
+          ordersNode.removeChild(ordersNode.firstChild);
+        }
+
+        // clear wallet data before rewriting it
+        var myNode = document.getElementById("walletsBox");
+        while (myNode.firstChild) {
+          myNode.removeChild(myNode.firstChild);
+        }
+        sandbox.update(function(){
+          for (var wallet in sandbox.wallets){
+            if (sandbox.wallets.hasOwnProperty(wallet)){
+
+              // super ugly, but does the trick for now
+              var p1 = document.createElement('p');
+              p1.innerHTML = 'Currency: ' +  sandbox.wallets[wallet].currency;
+              myNode.appendChild(p1);
+              var p2 = document.createElement('p');
+              p2.innerHTML = 'Available Balance: ' + sandbox.wallets[wallet].balance;
+              myNode.appendChild(p2);
+              var p3 = document.createElement('p');
+              p3.innerHTML = 'Hold balance: ' + sandbox.wallets[wallet].hold;
+              myNode.appendChild(p3);
+              var p4 = document.createElement('p');
+              p4.innerHTML = 'Wallet ID: ' + sandbox.wallets[wallet].id;
+              myNode.appendChild(p4);
+            }
+          }
+          console.log(sandbox.ordersList.length);
+          for (var i = 0; i < sandbox.ordersList.length; i++){
+            var price = document.createElement('p');
+            price.innerHTML = sandbox.ordersList[i].price ;
+            document.getElementById('orders').appendChild(price); 
+
+            var id = document.createElement('p');
+            id.innerHTML = sandbox.ordersList[i].id;
+            document.getElementById('orders').appendChild(id); 
+
+            sandbox.ordersList[i].price;
+          }
+        });
+      };
+
+    setInterval(update, 1000); 
+
     </script>
   </body>
 </html>
